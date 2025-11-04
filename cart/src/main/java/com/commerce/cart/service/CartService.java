@@ -20,4 +20,6 @@ public interface CartService {
     CartItem updateProductQuantityInCart(String keycloakId, Long productId, int delete);
 
     void deleteProductFromCart(String keycloakId, Long productId);
+
+    void clearCart(String keycloakId);
 }

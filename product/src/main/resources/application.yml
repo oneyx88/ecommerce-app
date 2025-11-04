@@ -10,6 +10,18 @@ spring:
       ddl-auto: create
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: product-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.commerce.product.kafka.InventoryEvent
 
 server:
   port: 8082
@@ -28,3 +40,7 @@ server:
 file:
   storage-type: local
   path: images/
+
+cache:
+  ttl:
+    product: 30m

@@ -27,7 +27,6 @@ public class Product {
     private String productName;
     @Size(min = 6, max = 255, message = "Description must be between 6 and 255 characters")
     private String description;
-    private Integer quantity;
     private String image;
     private Double price;
     private Double discount;

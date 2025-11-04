@@ -32,7 +32,7 @@ class CartController {
 
     /** Get User's Cart */
     @GetMapping("/carts/users/cart")
-    public ResponseEntity<CartResponse> getUserByKeycloakId(@RequestHeader("X-User-Id") String keycloakId) {
+    public ResponseEntity<CartResponse> getCartByKeycloakId(@RequestHeader("X-User-Id") String keycloakId) {
         CartResponse cart = cartService.getCartByKeycloakId(keycloakId);
         return ResponseEntity.ok(cart);
     }
@@ -59,4 +59,14 @@ class CartController {
         cartService.deleteProductFromCart(keycloakId, productId);
         return ResponseEntity.noContent().build();
     }
+
+    /** Clear Entire Cart */
+    @DeleteMapping("/cart/clear")
+    public ResponseEntity<Void> clearCart(@RequestHeader("X-User-Id") String keycloakId) {
+
+        cartService.clearCart(keycloakId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

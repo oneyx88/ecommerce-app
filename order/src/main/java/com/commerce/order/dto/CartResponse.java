@@ -1,6 +1,5 @@
 package com.commerce.order.dto;
 
-import com.commerce.order.model.CartItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

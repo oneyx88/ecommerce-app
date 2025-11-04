@@ -5,6 +5,7 @@ import com.commerce.cart.dto.CartResponse;
 import com.commerce.cart.dto.ProductDTO;
 import com.commerce.cart.exceptions.ApiException;
 import com.commerce.cart.model.CartItem;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,16 +24,14 @@ import java.util.Map;
  * Description:
  */
 @Service
+@Slf4j
 public class CartServiceImpl implements CartService {
-    // todo 产品更新，购物车更新
     @Autowired
     private ProductFeignClient productFeignClient;
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired
     private UserClientService userClientService;
-    @Autowired
-    private ModelMapper modelMapper;
 
 
     private String buildCartKey(String keycloakId) {
@@ -50,6 +49,7 @@ public class CartServiceImpl implements CartService {
 
         // 获取商品信息并校验
         ProductDTO product = productFeignClient.getProductById(productId);
+        log.info("Product: {}", product);
         validateProductAvailability(product, quantity);
 
         // 检查购物车中是否已存在该商品
@@ -69,7 +69,7 @@ public class CartServiceImpl implements CartService {
                 .productPrice(product.getSpecialPrice())
                 .image(product.getImage())
                 .productName(product.getProductName())
-                .productQuantity(product.getQuantity())
+                .productQuantity(product.getAvailableStock())
                 .build();
 
         // 保存进 Redis
@@ -159,13 +159,28 @@ public class CartServiceImpl implements CartService {
 
     /** 校验库存和数量 */
     private void validateProductAvailability(ProductDTO product, Integer quantity) {
-        if (product.getQuantity() == 0) {
+        if (product.getAvailableStock() == 0) {
             throw new ApiException(product.getProductName() + " is not available", HttpStatus.BAD_REQUEST);
         }
-        if (product.getQuantity() < quantity) {
+        if (product.getAvailableStock() < quantity) {
             throw new ApiException("Please order " + product.getProductName() +
-                    " ≤ " + product.getQuantity(), HttpStatus.BAD_REQUEST);
+                    " ≤ " + product.getAvailableStock(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+
+    @Override
+    public void clearCart(String keycloakId) {
+        String cartKey = buildCartKey(keycloakId);
+
+        // 检查购物车是否存在或为空
+        Map<Object, Object> cartMap = redisTemplate.opsForHash().entries(cartKey);
+        if (cartMap.isEmpty()) {
+            throw new ApiException("Cart is already empty.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 清空购物车
+        redisTemplate.delete(cartKey);
     }
 
 

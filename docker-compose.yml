@@ -76,6 +76,19 @@ services:
       - backend
     restart: unless-stopped
 
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui:latest
+#    container_name: kafka-ui
+#    ports:
+#      - "8088:8080"
+#    environment:
+#      - KAFKA_CLUSTERS_0_NAME=local
+#      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=host.docker.internal:9092
+#    depends_on:
+#      - kafka
+#    networks:
+#      - backend
+
 volumes:
   mysql_data:
   kafka_data:

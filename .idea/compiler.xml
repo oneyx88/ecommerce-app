@@ -9,18 +9,19 @@
         <outputRelativeToContentRoot value="true" />
         <module name="product" />
       </profile>
-      <profile name="Annotation profile for order" enabled="true">
+      <profile name="Annotation profile for user" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
-        <module name="payment" />
         <module name="address" />
+        <module name="payment" />
         <module name="inventory" />
         <module name="user" />
         <module name="cart" />
+        <module name="gateway" />
         <module name="order" />
       </profile>
     </annotationProcessing>
@@ -35,6 +36,7 @@
       <module name="cart" options="-parameters" />
       <module name="common" options="-parameters" />
       <module name="ecomm-app" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="inventory" options="-parameters" />
       <module name="order" options="-parameters" />
       <module name="payment" options="-parameters" />

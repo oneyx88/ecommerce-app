@@ -32,6 +32,7 @@ services:
     networks:
       - backend
 
+
 # todo 后续开启持久化
   redis:
     image: redis:7.2
@@ -92,6 +93,8 @@ services:
 volumes:
   mysql_data:
   kafka_data:
+  keycloak_data:
+
 
 networks:
   backend:

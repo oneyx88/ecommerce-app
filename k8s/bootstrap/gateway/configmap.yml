@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  labels:
+    app: gateway
+    app.kubernetes.io/name: gateway
+    app.kubernetes.io/part-of: ecommerce
+data:
+  application-k8s.yml: |
+    server:
+      port: 8080
+
+    spring:
+      application:
+        name: gateway-service
+
+      cloud:
+        gateway:
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+            - TokenRelay
+          routes:
+            - id: user-service
+              uri: http://user:8081
+              predicates:
+                - Path=/api/v1/users/**
+            - id: order-service
+              uri: http://order:8085
+              predicates:
+                - Path=/api/v1/orders/**
+            - id: product-service
+              uri: http://product:8082
+              predicates:
+                - Path=/api/v1/products/**, /api/v1/categories/**
+            - id: inventory-service
+              uri: http://inventory:8086
+              predicates:
+                - Path=/api/v1/inventories/**
+            - id: payment-service
+              uri: http://payment:8087
+              predicates:
+                - Path=/api/v1/payments/**
+            - id: cart-service
+              uri: http://cart:8083
+              predicates:
+                - Path=/api/v1/carts/**
+            - id: address-service
+              uri: http://address:8084
+              predicates:
+                - Path=/api/v1/addresses/**
+
+      data:
+        redis:
+          host: redis
+          port: 6379
+
+      security:
+        oauth2:
+          client:
+            provider:
+              keycloak:
+                issuer-uri: http://keycloak:8080/realms/ecomm-app
+            registration:
+              keycloak:
+                client-id: ecomm-oauth2
+                client-secret: ${KEYCLOAK_CLIENT_SECRET}
+                scope: openid,profile,email
+                authorization-grant-type: authorization_code
+                redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          resourceserver:
+            jwt:
+              issuer-uri: http://keycloak:8080/realms/ecomm-app
+
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus
+      endpoint:
+        health:
+          show-details: always

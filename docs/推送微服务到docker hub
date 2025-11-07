@@ -1,0 +1,29 @@
+# user-service
+docker build -t yixiwan/user-service:v1.0 -t yixiwan/user-service:latest ./user
+docker push yixiwan/user-service:v1.0
+docker push yixiwan/user-service:latest
+
+docker build -t yixiwan/product-service:v1.0 -t yixiwan/product-service:latest ./product
+docker push yixiwan/product-service:v1.0
+docker push yixiwan/product-service:latest
+
+docker build -t yixiwan/order-service:v1.0 -t yixiwan/order-service:latest ./order
+docker push yixiwan/order-service:v1.0
+docker push yixiwan/order-service:latest
+
+docker build -t yixiwan/payment-service:v1.0 -t yixiwan/payment-service:latest ./payment
+docker push yixiwan/payment-service:v1.0
+docker push yixiwan/payment-service:latest
+
+docker build -t yixiwan/inventory-service:v1.0 -t yixiwan/inventory-service:latest ./inventory
+docker push yixiwan/inventory-service:v1.0
+docker push yixiwan/inventory-service:latest
+
+docker build -t yixiwan/cart-service:v1.0 -t yixiwan/cart-service:latest ./cart
+docker push yixiwan/cart-service:v1.0
+docker push yixiwan/cart-service:latest
+
+docker build -t yixiwan/address-service:v1.0 -t yixiwan/address-service:latest ./address
+docker push yixiwan/address-service:v1.0
+docker push yixiwan/address-service:latest
+

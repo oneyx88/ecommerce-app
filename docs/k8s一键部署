@@ -1,0 +1,81 @@
+#!/bin/bash
+set -e
+
+echo "======================================"
+echo "🚀 Starting full cluster deployment..."
+echo "======================================"
+
+# 安装 NGINX Ingress Controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+
+# -------------------------
+# 1️⃣ Deploy core dependencies
+# -------------------------
+echo ">>> Step 1: Deploy MySQL"
+kubectl apply -f k8s/services/mysql/
+
+echo ">>> Step 2: Deploy Redis & RedisInsight"
+kubectl apply -f k8s/services/redis/
+kubectl apply -f k8s/services/redisinsight/
+
+echo ">>> Step 3: Deploy Kafka"
+kubectl apply -f k8s/services/kafka/
+
+echo ">>> Step 4: Deploy Keycloak"
+kubectl apply -f k8s/services/keycloak/
+
+# -------------------------
+# 2️⃣ Wait for dependencies
+# -------------------------
+echo "⏳ Waiting for core services to be ready..."
+sleep 30
+
+# -------------------------
+# 3️⃣ Deploy business microservices
+# -------------------------
+echo ">>> Step 5: Deploy User Service"
+kubectl apply -f k8s/bootstrap/user/
+
+echo ">>> Step 6: Deploy Product Service"
+kubectl apply -f k8s/bootstrap/product/
+
+echo ">>> Step 7: Deploy Inventory Service"
+kubectl apply -f k8s/bootstrap/inventory/
+
+echo ">>> Step 8: Deploy Order Service"
+kubectl apply -f k8s/bootstrap/order/
+
+echo ">>> Step 9: Deploy Cart Service"
+kubectl apply -f k8s/bootstrap/cart/
+
+echo ">>> Step 10: Deploy Address Service"
+kubectl apply -f k8s/bootstrap/address/
+
+echo ">>> Step 11: Deploy Payment Service"
+kubectl apply -f k8s/bootstrap/payment/
+
+echo ">>> Step 12: Deploy Ingress"
+kubectl apply -f k8s/ingress/
+
+# -------------------------
+# 4️⃣ Finish
+# -------------------------
+echo "✅ All services have been successfully applied!"
+
+echo ""
+echo "🔍 You can check status with:"
+echo "kubectl get pods -A"
+echo "kubectl get svc -A"
+echo ""
+echo "💡 To delete all resources later:"
+echo "kubectl delete -f k8s/bootstrap/ && kubectl delete -f k8s/services/"
+
+
+#查看日志
+kubectl logs -l app=user --tail=30
+
+#创建 TLS Secret
+- brew install mkcert nss && mkcert -install
+- mkcert keycloak.local api.local redis.local
+- kubectl create secret tls ecommerce-tls --namespace default --cert=keycloak.local+2.pem --key=keycloak.local+2-key.pem --dry-run=client -o yaml | kubectl apply -f -

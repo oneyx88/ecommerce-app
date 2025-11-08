@@ -5,9 +5,11 @@ metadata:
   labels:
     app: mysql
 spec:
-  type: ClusterIP
+  type: NodePort                # ✅ 改这里
   selector:
     app: mysql
   ports:
-    - port: 3306
+    - port: 3306                # ✅ 保持 MySQL 默认端口
       targetPort: 3306
+      nodePort: 30306           # ✅ 添加 nodePort (范围: 30000-32767)
+

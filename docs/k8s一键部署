@@ -8,6 +8,7 @@ echo "======================================"
 # 安装 NGINX Ingress Controller
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
 
+kubectl -n ingress-nginx rollout status deploy/ingress-nginx-controller
 
 # -------------------------
 # 1️⃣ Deploy core dependencies
@@ -23,7 +24,9 @@ echo ">>> Step 3: Deploy Kafka"
 kubectl apply -f k8s/services/kafka/
 
 echo ">>> Step 4: Deploy Keycloak"
-kubectl apply -f k8s/services/keycloak/
+kubectl apply -k k8s/services/keycloak
+
+#kubectl apply -f k8s/ingress/ingress.yml
 
 # -------------------------
 # 2️⃣ Wait for dependencies

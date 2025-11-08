@@ -60,7 +60,7 @@ data:
           client:
             provider:
               keycloak:
-                issuer-uri: http://keycloak:8080/realms/ecomm-app
+                issuer-uri: https://keycloak.local/realms/ecomm-app
             registration:
               keycloak:
                 client-id: ecomm-oauth2
@@ -70,7 +70,7 @@ data:
                 redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
           resourceserver:
             jwt:
-              issuer-uri: http://keycloak:8080/realms/ecomm-app
+              issuer-uri: https://keycloak.local/realms/ecomm-app
 
     management:
       endpoints:
@@ -80,3 +80,10 @@ data:
       endpoint:
         health:
           show-details: always
+          probes:
+            enabled: true
+      health:
+        livenessState:
+          enabled: true
+        readinessState:
+          enabled: true

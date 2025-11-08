@@ -18,6 +18,10 @@ spec:
         app.kubernetes.io/name: product
         app.kubernetes.io/part-of: ecommerce
     spec:
+      hostAliases:
+        - ip: "10.101.92.232"
+          hostnames:
+            - "keycloak.local"
       containers:
         - name: product
           image: yixiwan/product-service:latest
@@ -25,6 +29,8 @@ spec:
           ports:
             - containerPort: 8082
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Djavax.net.ssl.trustStore=/etc/ssl/truststore/keycloak-local-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=JKS"
             - name: SPRING_CONFIG_LOCATION
               value: /config/application-k8s.yml
           envFrom:
@@ -35,6 +41,15 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /config
+            - name: truststore-volume
+              mountPath: /etc/ssl/truststore
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8082
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 30
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -61,3 +76,6 @@ spec:
         - name: config-volume
           configMap:
             name: product-config
+        - name: truststore-volume
+          secret:
+            secretName: gateway-truststore

@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       app: keycloak
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -20,11 +22,15 @@ spec:
           args:
             - "start-dev"
             - "--http-port=8080"
+            - "--hostname-strict=false"
+            - "--import-realm"
+            - "--http-enabled=true"
             - "--hostname=https://keycloak.local"
             - "--hostname-admin=https://keycloak.local"
-            - "--hostname-strict=false"
             - "--proxy-headers=xforwarded"
           env:
+            - name: KC_MIGRATION_STRATEGY
+              value: OVERWRITE_EXISTING
             - name: KEYCLOAK_ADMIN
               value: "admin"
             - name: KEYCLOAK_ADMIN_PASSWORD
@@ -34,6 +40,9 @@ spec:
           volumeMounts:
             - name: keycloak-storage
               mountPath: /opt/keycloak/data
+            - name: keycloak-realm
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
           readinessProbe:
             tcpSocket:
               port: 8080
@@ -51,4 +60,7 @@ spec:
         - name: keycloak-storage
           persistentVolumeClaim:
             claimName: keycloak-pvc
+        - name: keycloak-realm
+          configMap:
+            name: keycloak-realm
 

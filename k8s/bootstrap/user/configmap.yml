@@ -29,8 +29,7 @@ data:
         oauth2:
           resourceserver:
             jwt:
-              issuer-uri: http://keycloak:8080/realms/ecomm-app
-              jwk-set-uri: http://keycloak:8080/realms/ecomm-app/protocol/openid-connect/certs
+              issuer-uri: https://keycloak.local/realms/ecomm-app
 
     keycloak:
       auth-server-url: ${KEYCLOAK_SERVER_URL}

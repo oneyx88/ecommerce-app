@@ -1,0 +1,171 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+        - TokenRelay
+      routes:
+        # 1️⃣ user-service
+        - id: user-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userCircuit
+                fallbackUri: forward:/fallback/users
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                methods: GET, POST, PUT, DELETE
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        # 2️⃣ order-service
+        - id: order-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/v1/orders/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: orderCircuit
+                fallbackUri: forward:/fallback/orders
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+
+        # 3️⃣ product-service
+        - id: product-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/products/**, /api/v1/categories/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: productCircuit
+                fallbackUri: forward:/fallback/products
+            - name: Retry
+              args:
+                retries: 2
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT
+
+        # 4️⃣ inventory-service
+        - id: inventory-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/api/v1/inventories/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: inventoryCircuit
+                fallbackUri: forward:/fallback/inventories
+
+        # 5️⃣ payment-service
+        - id: payment-service
+          uri: http://payment:8087
+          predicates:
+            - Path=/api/v1/payments/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: paymentCircuit
+                fallbackUri: forward:/fallback/payments
+
+        # 6️⃣ cart-service
+        - id: cart-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/v1/carts/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: cartCircuit
+                fallbackUri: forward:/fallback/carts
+
+        # 7️⃣ address-service
+        - id: address-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/v1/addresses/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: addressCircuit
+                fallbackUri: forward:/fallback/addresses
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8443/realms/ecomm-app
+        registration:
+          keycloak:
+            client-id: ecomm-oauth2
+            client-secret: 0suFzByDwD8crmhf7oi8x4U1z52UaCCG
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8443/realms/ecomm-app
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userCircuit:
+        failure-rate-threshold: 50
+        sliding-window-size: 10
+        wait-duration-in-open-state: 5s
+      orderCircuit:
+        failure-rate-threshold: 50
+        sliding-window-size: 10
+        wait-duration-in-open-state: 5s
+      productCircuit:
+        failure-rate-threshold: 50
+        sliding-window-size: 10
+        wait-duration-in-open-state: 5s
+      inventoryCircuit:
+        failure-rate-threshold: 50
+        sliding-window-size: 10
+        wait-duration-in-open-state: 5s
+      paymentCircuit:
+        failure-rate-threshold: 50
+        sliding-window-size: 10
+        wait-duration-in-open-state: 5s
+      cartCircuit:
+        failure-rate-threshold: 50
+        sliding-window-size: 10
+        wait-duration-in-open-state: 5s
+      addressCircuit:
+        failure-rate-threshold: 50
+        sliding-window-size: 10
+        wait-duration-in-open-state: 5s
+

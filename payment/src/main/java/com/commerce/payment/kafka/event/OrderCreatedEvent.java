@@ -1,4 +1,4 @@
-package com.commerce.payment.kafka;
+package com.commerce.payment.kafka.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

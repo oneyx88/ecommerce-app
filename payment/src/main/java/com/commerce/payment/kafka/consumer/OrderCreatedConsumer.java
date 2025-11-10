@@ -1,6 +1,7 @@
-package com.commerce.payment.kafka;
+package com.commerce.payment.kafka.consumer;
 
 import com.commerce.payment.dto.PaymentRequest;
+import com.commerce.payment.kafka.event.OrderCreatedEvent;
 import com.commerce.payment.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;

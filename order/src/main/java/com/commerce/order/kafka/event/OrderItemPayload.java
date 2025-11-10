@@ -1,4 +1,4 @@
-package com.commerce.order.kafka;
+package com.commerce.order.kafka.event;
 
 /**
  * @author Yixi Wan

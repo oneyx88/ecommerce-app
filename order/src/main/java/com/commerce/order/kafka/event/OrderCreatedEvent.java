@@ -1,4 +1,4 @@
-package com.commerce.order.kafka;
+package com.commerce.order.kafka.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

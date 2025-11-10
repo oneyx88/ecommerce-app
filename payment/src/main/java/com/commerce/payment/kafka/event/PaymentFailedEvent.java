@@ -1,4 +1,4 @@
-package com.commerce.payment.kafka;
+package com.commerce.payment.kafka.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * @author Yixi Wan
- * @date 2025/11/3 17:17
+ * @date 2025/11/4 13:42
  * @package com.commerce.payment.kafka
  * <p>
  * Description:
@@ -17,10 +17,9 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentEvent implements Serializable {
+public class PaymentFailedEvent implements Serializable {
     private Long orderId;
     private Long paymentId;
-    private String paymentStatus; // INITIATED, SUCCESS, FAILED
-    private Double amount;
-    private LocalDateTime eventTime;
+    private String reason;
+    private LocalDateTime failedAt;
 }

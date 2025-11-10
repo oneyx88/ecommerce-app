@@ -1,0 +1,49 @@
+{
+  "realm": "ecomm-app",
+  "users": [
+    {
+      "id": "e55e2ee3-31d7-4f3c-9d83-f4c29a97425a",
+      "username": "admin",
+      "firstName": "Yixi",
+      "lastName": "Wan",
+      "email": "admin@gamil.com",
+      "emailVerified": false,
+      "createdTimestamp": 1762491887698,
+      "enabled": true,
+      "totp": false,
+      "credentials": [
+        {
+          "id": "6e0488e3-4329-44bc-a698-9dd57e574873",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1762491979642,
+          "secretData": "{\"value\":\"FlZwen8ImVFO4Hi12FkBsRnUxbZkvsZTJEqedZGgh8Q=\",\"salt\":\"QYTwp12tTnhRwt8jlCLCFQ==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["default-roles-ecomm-app", "ADMIN"],
+      "clientRoles": {
+        "realm-management": ["manage-realm", "manage-users", "view-users", "query-users"]
+      },
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "9d3ad6ef-7ff8-486f-864a-e0c0090f489b",
+      "username": "service-account-ecomm-oauth2",
+      "emailVerified": false,
+      "createdTimestamp": 1762491655700,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "ecomm-oauth2",
+      "credentials": [],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["INTERNAL", "default-roles-ecomm-app"],
+      "notBefore": 0,
+      "groups": []
+    }
+  ]
+}

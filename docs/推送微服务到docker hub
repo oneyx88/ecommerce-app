@@ -1,33 +1,48 @@
+# ==== Build & Push All Services ====
+
 # user-service
-docker build -t yixiwan/user-service:v1.0 -t yixiwan/user-service:latest ./user
-docker push yixiwan/user-service:v1.0
+docker build -t yixiwan/user-service:latest -t yixiwan/user-service:v1.1 ./user
 docker push yixiwan/user-service:latest
+docker push yixiwan/user-service:v1.1
 
-docker build -t yixiwan/product-service:v1.0 -t yixiwan/product-service:latest ./product
-docker push yixiwan/product-service:v1.0
+# product-service
+docker build -t yixiwan/product-service:latest -t yixiwan/product-service:v1.1 ./product
 docker push yixiwan/product-service:latest
+docker push yixiwan/product-service:v1.1
 
-docker build -t yixiwan/order-service:v1.0 -t yixiwan/order-service:latest ./order
-docker push yixiwan/order-service:v1.0
+# order-service
+docker build -t yixiwan/order-service:latest -t yixiwan/order-service:v1.1 ./order
 docker push yixiwan/order-service:latest
+docker push yixiwan/order-service:v1.1
 
-docker build -t yixiwan/payment-service:v1.0 -t yixiwan/payment-service:latest ./payment
-docker push yixiwan/payment-service:v1.0
+# payment-service
+docker build -t yixiwan/payment-service:latest -t yixiwan/payment-service:v1.1 ./payment
 docker push yixiwan/payment-service:latest
+docker push yixiwan/payment-service:v1.1
 
-docker build -t yixiwan/inventory-service:v1.0 -t yixiwan/inventory-service:latest ./inventory
-docker push yixiwan/inventory-service:v1.0
+# inventory-service
+docker build -t yixiwan/inventory-service:latest -t yixiwan/inventory-service:v1.1 ./inventory
 docker push yixiwan/inventory-service:latest
+docker push yixiwan/inventory-service:v1.1
 
-docker build -t yixiwan/cart-service:v1.0 -t yixiwan/cart-service:latest ./cart
-docker push yixiwan/cart-service:v1.0
+# cart-service
+docker build -t yixiwan/cart-service:latest -t yixiwan/cart-service:v1.1 ./cart
 docker push yixiwan/cart-service:latest
+docker push yixiwan/cart-service:v1.1
 
-docker build -t yixiwan/address-service:v1.0 -t yixiwan/address-service:latest ./address
-docker push yixiwan/address-service:v1.0
+# address-service
+docker build -t yixiwan/address-service:latest -t yixiwan/address-service:v1.1 ./address
 docker push yixiwan/address-service:latest
+docker push yixiwan/address-service:v1.1
 
-docker build -t yixiwan/gateway-service:v1.0 -t yixiwan/gateway-service:latest ./gateway
-docker push yixiwan/gateway-service:v1.0
+# gateway-service
+docker build -t yixiwan/gateway-service:latest -t yixiwan/gateway-service:v1.1 ./gateway
 docker push yixiwan/gateway-service:latest
+docker push yixiwan/gateway-service:v1.1
+
+# eureka (注意：不带 -service 后缀)
+docker build -t yixiwan/eureka:latest -t yixiwan/eureka:v1.1 ./eureka
+docker push yixiwan/eureka:latest
+docker push yixiwan/eureka:v1.1
+
 

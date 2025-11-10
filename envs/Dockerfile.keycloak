@@ -1,0 +1,28 @@
+# -------------------------------
+# 🧩 Stage 1: Build AWS CLI
+# -------------------------------
+FROM debian:bullseye-slim AS awscli
+RUN apt-get update && \
+    apt-get install -y curl unzip && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip" && \
+    unzip /tmp/awscliv2.zip -d /tmp && \
+    /tmp/aws/install
+
+# -------------------------------
+# 🌐 Stage 2: Keycloak base image (Distroless)
+# -------------------------------
+FROM quay.io/keycloak/keycloak:26.0.2
+
+USER root
+
+# 拷贝 AWS CLI 到 Keycloak 镜像
+COPY --from=awscli /usr/local/bin/aws /usr/local/bin/aws
+COPY --from=awscli /usr/local/aws-cli /usr/local/aws-cli
+
+# 准备证书目录
+RUN mkdir -p /opt/keycloak/certs && chown -R keycloak:keycloak /opt/keycloak
+
+USER keycloak
+
+ENTRYPOINT ["sh", "-c"]
+CMD ["/opt/keycloak/bin/kc.sh start --optimized"]

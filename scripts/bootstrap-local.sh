@@ -26,12 +26,19 @@ ensure_certs() {
   if command -v mkcert >/dev/null 2>&1; then
     echo "mkcert detected. Generating local trusted certificates..."
     mkcert -install >/dev/null 2>&1 || true
-    mkcert keycloak.local api.local redis.local >/dev/null 2>&1 || mkcert keycloak.local api.local redis.local
+    # Generate a single cert covering local domains only, with fixed output paths
+    mkcert -cert-file "$CERT_PEM" -key-file "$KEY_PEM" \
+      keycloak.local api.local redis.local >/dev/null 2>&1 || \
+    mkcert -cert-file "$CERT_PEM" -key-file "$KEY_PEM" \
+      keycloak.local api.local redis.local
   elif command -v brew >/dev/null 2>&1; then
     echo "mkcert not found. Installing mkcert via Homebrew..."
     brew install mkcert nss >/dev/null 2>&1 || brew install mkcert nss
     mkcert -install >/dev/null 2>&1 || true
-    mkcert keycloak.local api.local redis.local >/dev/null 2>&1 || mkcert keycloak.local api.local redis.local
+    mkcert -cert-file "$CERT_PEM" -key-file "$KEY_PEM" \
+      keycloak.local api.local redis.local >/dev/null 2>&1 || \
+    mkcert -cert-file "$CERT_PEM" -key-file "$KEY_PEM" \
+      keycloak.local api.local redis.local
   else
     echo "Homebrew not available. Falling back to OpenSSL self-signed certificate (browser may warn)."
     OPENSSL_CNF="$ROOT_DIR/tmp-openssl.cnf"
@@ -108,11 +115,11 @@ fi
 # Apply other service manifests, excluding kustomization.yml files
 find "$ROOT_DIR/k8s/services" -type f \( -name '*.yml' -o -name '*.yaml' \) -not -name 'kustomization.yml' -print0 | xargs -0 -n1 kubectl apply -f >/dev/null
 
-echo "[6/9] Creating/Updating microservice Secrets from .env files (if present)..."
+echo "[6/9] Creating/Updating microservice Secrets from central envs/*.env files (if present)..."
 create_service_secrets() {
   local services=(address cart product order payment inventory gateway user)
   for svc in "${services[@]}"; do
-    local env_file="$ROOT_DIR/$svc/.env"
+    local env_file="$ROOT_DIR/envs/$svc.env"
     if [[ -f "$env_file" ]]; then
       echo "  - $svc: loading $env_file into secret '$svc-secret'"
       kubectl create secret generic "$svc-secret" \
@@ -120,7 +127,7 @@ create_service_secrets() {
         --from-env-file="$env_file" \
         --dry-run=client -o yaml | kubectl apply -f - >/dev/null
     else
-      echo "  - $svc: .env not found, skipping secret creation"
+      echo "  - $svc: envs/$svc.env not found, skipping secret creation"
     fi
   done
 }
@@ -140,8 +147,12 @@ kubectl create secret generic gateway-truststore \
 echo "Waiting for Keycloak to become Ready (pre-gateway rollout)..."
 kubectl rollout status deploy/keycloak --timeout=180s || true
 
-echo "[7/9] Applying application microservices (ConfigMaps/Deployments/Services)..."
-find "$ROOT_DIR/k8s/bootstrap" -type f \( -name '*.yml' -o -name '*.yaml' \) -print0 | xargs -0 -n1 kubectl apply -f >/dev/null
+echo "[7/9] Applying application microservices (ConfigMaps/Deployments/Services, skipping Secrets)..."
+# Skip secret manifests; secrets are created from .env in step [6/9]
+find "$ROOT_DIR/k8s/bootstrap" -type f \
+  \( -name '*.yml' -o -name '*.yaml' \) \
+  -not -name 'secret.yml' -not -name 'secret.yaml' \
+  -print0 | xargs -0 -n1 kubectl apply -f >/dev/null
 
 echo "[8/9] Applying ingress..."
 kubectl apply -f "$ROOT_DIR/k8s/ingress/ingress.yml" >/dev/null
@@ -182,5 +193,5 @@ set -e
 
 echo
 echo "Done. Visit:"
-echo "  - https://keycloak.local/ (will redirect to admin UI)"
+echo "  - https://keycloak.local/ (admin UI)"
 echo "If you see temporary 503, wait ~30s for pods to warm up and retry."

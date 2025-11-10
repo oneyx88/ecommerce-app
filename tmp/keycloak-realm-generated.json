@@ -1,0 +1,17 @@
+{
+  "realm": "ecomm-app",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "ecomm-oauth2",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "0suFzByDwD8crmhf7oi8x4U1z52UaCCG",
+      "bearerOnly": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "authorizationServicesEnabled": false
+    }
+  ]
+}

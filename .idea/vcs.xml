@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/address" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cart" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/eureka" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/gateway" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/inventory" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/order" vcs="Git" />

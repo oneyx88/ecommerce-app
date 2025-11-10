@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="product" />
+        <module name="eureka" />
       </profile>
       <profile name="Annotation profile for user" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -20,8 +21,8 @@
         <module name="payment" />
         <module name="inventory" />
         <module name="user" />
-        <module name="cart" />
         <module name="gateway" />
+        <module name="cart" />
         <module name="order" />
       </profile>
     </annotationProcessing>
@@ -36,6 +37,7 @@
       <module name="cart" options="-parameters" />
       <module name="common" options="-parameters" />
       <module name="ecomm-app" options="-parameters" />
+      <module name="eureka" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="inventory" options="-parameters" />
       <module name="order" options="-parameters" />

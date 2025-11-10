@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yml
+  - service.yml
+  - keycloak-pvc.yml
+
+configMapGenerator:
+  - name: keycloak-realm
+    files:
+      - configuration/ecomm-app-realm.json
+      - configuration/ecomm-app-users-0.json
+
+# 让 Kustomize 根据内容生成带哈希后缀的 ConfigMap 名称，
+# 并在同一 Kustomization 中自动重写引用，确保卷引用保持一致。
+generatorOptions:
+  disableNameSuffixHash: false

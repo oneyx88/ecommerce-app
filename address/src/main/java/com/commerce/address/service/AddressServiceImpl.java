@@ -27,19 +27,11 @@ public class AddressServiceImpl implements AddressService {
     @Autowired
     private AddressRepository addressRepository;
     @Autowired
-    private UserClientService userClientService;
-    @Autowired
     private ModelMapper modelMapper;
 
     /** Create Address */
     @Override
     public AddressResponse createAddress(String keycloakId, AddressRequest addressRequest) {
-        // 检查用户是否存在
-        boolean isActive = userClientService.isUserActive(keycloakId);
-        if (!isActive) {
-            throw new ApiException("User is not active or does not exist", HttpStatus.UNAUTHORIZED);
-        }
-
         Address address = modelMapper.map(addressRequest, Address.class);
         address.setKeycloakId(keycloakId);
         address.setCreatedAt(LocalDateTime.now());

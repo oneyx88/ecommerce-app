@@ -8,7 +8,7 @@ package com.commerce.user.model;
  * Description:
  */
 public enum AppRole {
-    ROLE_USER,
-    ROLE_ADMIN,
-    ROLE_SELLER
+    USER,
+    ADMIN,
+    SELLER
 }

@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService{
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         // 验证category是否已经存在
         if (categoryRepository.existsByCategoryName(categoryRequest.getCategoryName())) {
-            throw new ApiException("Category with the name" + categoryRequest.getCategoryName() + "already exists", HttpStatus.BAD_REQUEST);
+            throw new ApiException("Category with the name " + categoryRequest.getCategoryName() + "already exists", HttpStatus.BAD_REQUEST);
         }
         // insert category 并且 返回DTO
         Category category = modelMapper.map(categoryRequest, Category.class);

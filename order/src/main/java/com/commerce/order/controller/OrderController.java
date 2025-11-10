@@ -19,16 +19,16 @@ import java.net.URI;
  * Description:
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/orders")
 class OrderController {
 
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("/orders")
+    @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@RequestHeader("X-User-Id") String keycloakId,
                             @RequestHeader("X-User-Email") String userEmail) {
         OrderResponse orderResponse = orderService.createOrder(keycloakId, userEmail);
-        return ResponseEntity.created(URI.create("/orders/" + orderResponse.getKeycloakId())).body(orderResponse);
+        return ResponseEntity.created(URI.create("/api/v1/orders/" + orderResponse.getKeycloakId())).body(orderResponse);
     }
 }

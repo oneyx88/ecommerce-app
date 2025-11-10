@@ -83,8 +83,4 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(user, UserInfoResponse.class);
     }
 
-    @Override
-    public boolean isUserActive(String keycloakId) {
-        return userRepository.existsByKeycloakIdAndEnabledTrueAndDeletedFalse(keycloakId);
-    }
 }

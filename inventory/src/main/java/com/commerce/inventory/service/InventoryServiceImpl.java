@@ -1,6 +1,6 @@
 package com.commerce.inventory.service;
 
-import com.commerce.inventory.kafka.InventoryEvent;
+import com.commerce.inventory.kafka.event.InventoryEvent;
 import com.commerce.inventory.dto.InventoryRequest;
 import com.commerce.inventory.dto.InventoryResponse;
 import com.commerce.inventory.dto.StockOperationRequest;
@@ -65,6 +65,9 @@ public class InventoryServiceImpl implements InventoryService {
     /** 新增库存 */
     @Override
     public InventoryResponse createInventory(Long productId, InventoryRequest inventoryRequest) {
+        if (inventoryRepository.findByProductId(productId).isPresent()) {
+            throw new ApiException("Inventory already exists for productId: " + productId, HttpStatus.BAD_REQUEST);
+        }
         Inventory inventory = modelMapper.map(inventoryRequest, Inventory.class);
         inventory.setProductId(productId);
         Inventory saved = inventoryRepository.save(inventory);

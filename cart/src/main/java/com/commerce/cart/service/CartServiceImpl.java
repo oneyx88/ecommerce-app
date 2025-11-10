@@ -6,7 +6,6 @@ import com.commerce.cart.dto.ProductDTO;
 import com.commerce.cart.exceptions.ApiException;
 import com.commerce.cart.model.CartItem;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -30,16 +29,9 @@ public class CartServiceImpl implements CartService {
     private ProductFeignClient productFeignClient;
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-    @Autowired
-    private UserClientService userClientService;
 
 
     private String buildCartKey(String keycloakId) {
-        // 检查user是否存在
-        Boolean isUserActive = userClientService.isUserActive(keycloakId);
-        if (!isUserActive) {
-            throw new ApiException("User is not active or does not exist", HttpStatus.UNAUTHORIZED);
-        }
         return "cart:" + keycloakId;
     }
 
@@ -159,12 +151,19 @@ public class CartServiceImpl implements CartService {
 
     /** 校验库存和数量 */
     private void validateProductAvailability(ProductDTO product, Integer quantity) {
-        if (product.getAvailableStock() == 0) {
+        Integer stock = product.getAvailableStock();
+
+        if (stock == null) {
+            throw new ApiException(product.getProductName() + " stock information is missing", HttpStatus.BAD_REQUEST);
+        }
+
+        if (stock <= 0) {
             throw new ApiException(product.getProductName() + " is not available", HttpStatus.BAD_REQUEST);
         }
-        if (product.getAvailableStock() < quantity) {
+
+        if (stock < quantity) {
             throw new ApiException("Please order " + product.getProductName() +
-                    " ≤ " + product.getAvailableStock(), HttpStatus.BAD_REQUEST);
+                    " ≤ " + stock, HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
  * <p>
  * Description:
  */
-@FeignClient(name = "product-service", url = "http://localhost:8082/api")
+@FeignClient(name = "product-service", path = "/api/v1")
 public interface ProductFeignClient {
 
-    @GetMapping("/product/{productId}")
+    @GetMapping("/products/{productId}")
     ProductDTO getProductById(@PathVariable Long productId);
 }

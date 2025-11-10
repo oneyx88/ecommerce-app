@@ -16,6 +16,4 @@ public interface UserService {
     MessageResponse registerUser(SignupRequest request, AppRole role);
 
     UserInfoResponse getUserInfo(String keycloakId);
-
-    boolean isUserActive(String keycloakId);
 }

@@ -8,6 +8,7 @@ import com.commerce.product.dto.product.ProductResponse;
 import com.commerce.product.service.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,19 +22,21 @@ import java.net.URI;
  * Description:
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/products")
 class ProductController {
 
     @Autowired
     ProductService productService;
 
-    @PostMapping("/admin/categories/{categoryId}/product")
+    @PostMapping("/categories/{categoryId}")
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ProductResponse> addProduct(@PathVariable Long categoryId, @RequestBody ProductRequest productRequest) {
-        return ResponseEntity.created(URI.create("/api/admin/categories/" + categoryId + "/product"))
+        return ResponseEntity.created(URI.create("/api/v1/products/categories/" + categoryId))
                 .body(productService.addProduct(categoryId, productRequest));
     }
 
-    @GetMapping("/public/products")
+    @GetMapping
+    @PreAuthorize("permitAll()")
     public ResponseEntity<PagedProductResponse> getAllProducts(@RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
                                                                @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
                                                                @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCT_BY) String sortBy,
@@ -41,7 +44,8 @@ class ProductController {
         return ResponseEntity.ok(productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder));
     }
 
-    @GetMapping("/public/categories/{categoryId}/products")
+    @GetMapping("/categories/{categoryId}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<PagedProductResponse> getProductsByCategory(@PathVariable Long categoryId,
                                                                       @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
                                                                       @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
@@ -50,7 +54,8 @@ class ProductController {
         return ResponseEntity.ok(productService.searchByCategory(categoryId, pageNumber, pageSize, sortBy, sortOrder));
     }
 
-    @GetMapping("/public/products/keyword/{keyword}")
+    @GetMapping("/keyword/{keyword}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<PagedProductResponse> getProductsByKeyword(@PathVariable String keyword,
                                                                      @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
                                                                      @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
@@ -59,23 +64,27 @@ class ProductController {
         return ResponseEntity.ok(productService.searchByKeyword(keyword, pageNumber, pageSize, sortBy, sortOrder));
     }
 
-    @PutMapping("/product/{productId}")
+    @PutMapping("/{productId}")
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long productId, @RequestBody ProductRequest productRequest) {
         return ResponseEntity.ok(productService.updateProduct(productId, productRequest));
     }
 
-    @DeleteMapping("/admin/product/{productId}")
+    @DeleteMapping("/{productId}")
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("product/{productId}/image")
+    @PutMapping("/{productId}/image")
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ProductResponse> updateProductImage(@PathVariable Long productId, @RequestParam("image") MultipartFile image) {
         return ResponseEntity.ok(productService.updateProductImage(productId, image));
     }
 
-    @GetMapping("/product/{productId}")
+    @GetMapping("/{productId}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long productId) {
         return ResponseEntity.ok(productService.getProductById(productId));
     }

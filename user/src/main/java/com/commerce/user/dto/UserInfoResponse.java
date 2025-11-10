@@ -23,7 +23,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserInfoResponse {
 
-    private Long id;
+    private Long userId;
     private String keycloakId;
 
     private String username;

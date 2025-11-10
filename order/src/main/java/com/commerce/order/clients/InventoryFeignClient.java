@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * <p>
  * Description:
  */
-@FeignClient(name = "inventory", url = "http://localhost:8086", path = "/api/inventory")
+@FeignClient(name = "inventory-service", path = "/api/v1/inventories")
 public interface InventoryFeignClient {
     @PostMapping("/lock")
     ResponseEntity<String> lockStock(@RequestBody StockOperationRequest request);

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
  * <p>
  * Description:
  */
-@FeignClient(name = "inventory-service", url = "http://localhost:8086", path = "/api")
+@FeignClient(name = "inventory-service", path = "/api/v1")
 public interface InventoryFeignClient {
-    @GetMapping("/inventory/product/{productId}")
+    @GetMapping("/inventories/product/{productId}")
     InventoryResponse getInventoryByProductId(@PathVariable Long productId);
 }

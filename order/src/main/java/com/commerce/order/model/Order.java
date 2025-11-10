@@ -32,6 +32,8 @@ public class Order {
     @Column(nullable = false)
     private String keycloakId;
 
+    private Long paymentId;
+
     /** 用户邮箱快照（下单时复制） */
     @Column(nullable = false)
     private String email;

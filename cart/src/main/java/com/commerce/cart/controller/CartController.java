@@ -6,6 +6,7 @@ import com.commerce.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,12 +17,13 @@ import org.springframework.web.bind.annotation.*;
  * Description:
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/carts")
 class CartController {
     @Autowired
     private CartService cartService;
 
-    @PostMapping("/carts/products/{productId}/quantity/{quantity}")
+    @PostMapping("/products/{productId}/quantity/{quantity}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> addProductToCart(
             @PathVariable Long productId,
             @PathVariable Integer quantity,
@@ -31,14 +33,16 @@ class CartController {
     }
 
     /** Get User's Cart */
-    @GetMapping("/carts/users/cart")
-    public ResponseEntity<CartResponse> getCartByKeycloakId(@RequestHeader("X-User-Id") String keycloakId) {
+    @GetMapping("/users/cart")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CartResponse> getUserCart(@RequestHeader("X-User-Id") String keycloakId) {
         CartResponse cart = cartService.getCartByKeycloakId(keycloakId);
         return ResponseEntity.ok(cart);
     }
 
     /** Update Product Quantity */
-    @PutMapping("/cart/products/{productId}/quantity/{operation}")
+    @PutMapping("/products/{productId}/quantity/{operation}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CartItem> updateProductQuantity(
             @PathVariable Long productId,
             @PathVariable String operation,
@@ -51,7 +55,8 @@ class CartController {
     }
 
     /** Delete Product from Cart */
-    @DeleteMapping("/cart/product/{productId}")
+    @DeleteMapping("/product/{productId}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deleteProductFromCart(
             @PathVariable Long productId,
             @RequestHeader("X-User-Id") String keycloakId) {
@@ -61,12 +66,20 @@ class CartController {
     }
 
     /** Clear Entire Cart */
-    @DeleteMapping("/cart/clear")
-    public ResponseEntity<Void> clearCart(@RequestHeader("X-User-Id") String keycloakId) {
+    @DeleteMapping("/users/{keycloakId}")
+    @PreAuthorize("hasRole('INTERNAL')")
+    public ResponseEntity<Void> clearCart(@PathVariable String keycloakId) {
 
         cartService.clearCart(keycloakId);
         return ResponseEntity.noContent().build();
     }
 
+
+    @GetMapping("/users/{keycloakId}/cart")
+    @PreAuthorize("hasRole('INTERNAL')")
+    public ResponseEntity<CartResponse> getCartBykeycloakId(@PathVariable String keycloakId) {
+        CartResponse cart = cartService.getCartByKeycloakId(keycloakId);
+        return ResponseEntity.ok(cart);
+    }
 
 }

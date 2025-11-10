@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PagedProductResponse {
-    public List<ProductResponse> products;
+    public List<ProductSummary> productSummaries;
     public Integer pageNumber;
     public Integer pageSize;
     public Integer totalPages;

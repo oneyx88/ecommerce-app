@@ -8,7 +8,11 @@ import com.commerce.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author Yixi Wan
@@ -18,32 +22,29 @@ import org.springframework.web.bind.annotation.*;
  * Description:
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/users")
 class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/signup/users")
+    @PostMapping("/signup")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest request) {
-        return ResponseEntity.ok(userService.registerUser(request, AppRole.ROLE_USER));
+        return ResponseEntity.ok(userService.registerUser(request, AppRole.USER));
     }
 
     @PostMapping("/signup/sellers")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<MessageResponse> registerSeller(@Valid @RequestBody SignupRequest request) {
-        return ResponseEntity.ok(userService.registerUser(request, AppRole.ROLE_SELLER));
+        return ResponseEntity.ok(userService.registerUser(request, AppRole.SELLER));
     }
 
-    @GetMapping("/user")
+    @GetMapping
+    @PreAuthorize("permitAll()")
     public ResponseEntity<UserInfoResponse> getUserInfo(@RequestHeader("X-User-Id") String keycloakId) {
-
         UserInfoResponse userInfo = userService.getUserInfo(keycloakId);
         return ResponseEntity.ok(userInfo);
     }
 
-    @GetMapping("/active/{keycloakId}")
-    public ResponseEntity<Boolean> isUserActive(@PathVariable String keycloakId) {
-        boolean active = userService.isUserActive(keycloakId);
-        return ResponseEntity.ok(active);
-    }
 
 }
